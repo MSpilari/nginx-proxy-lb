@@ -1,0 +1,36 @@
+services:
+  spring-server-1:
+    build:
+      context: .
+    environment:
+      - SERVER_NAME=Server_1
+    ports:
+      - "8081:8080"
+    networks:
+      - app_network
+
+  spring-server-2:
+    build:
+      context: .
+    environment:
+      - SERVER_NAME=Server_2
+    ports:
+      - "8082:8080"
+    networks:
+      - app_network
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "8080:8080"
+    depends_on:
+      - spring-server-1
+      - spring-server-2
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
