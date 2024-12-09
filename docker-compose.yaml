@@ -40,9 +40,19 @@ services:
       - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
 
+  grafana:
+    image: grafana/grafana:latest
+    networks:
+      - app_network
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
 networks:
   app_network:
     driver: bridge
 
 volumes:
   prometheus_data:
+  grafana_data:
