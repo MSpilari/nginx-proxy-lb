@@ -1,0 +1,30 @@
+global:
+  smtp_smarthost: 'sandbox.smtp.mailtrap.io:2525'
+  smtp_from: 'alertmanager@email.com'
+  smtp_auth_username: 'Your_username'
+  smtp_auth_password: 'Your_password'
+
+route:
+  receiver: email-alert
+
+receivers:
+  - name: email-alert
+    email_configs:
+      - to: 'devs@empresa.com'
+        send_resolved: true
+        headers:
+          subject: '[Application Alert] {{ .CommonAnnotations.summary }}'
+        html: |
+          <h2>[{{ .Status | toUpper }}] {{ .CommonAnnotations.summary }}</h2>
+          <p>{{ .CommonAnnotations.description }}</p>
+          <hr />
+          <ul>
+          {{ range .Alerts }}
+            <li>
+              <strong>Alert:</strong> {{ .Labels.alertname }}<br/>
+              <strong>Instance:</strong> {{ .Labels.instance }}<br/>
+              <strong>Severity:</strong> {{ .Labels.severity }}<br/>
+              <strong>Starts at:</strong> {{ .StartsAt }}
+            </li>
+          {{ end }}
+          </ul>
