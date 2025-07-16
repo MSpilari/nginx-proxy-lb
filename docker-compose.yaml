@@ -38,6 +38,7 @@ services:
       - app_network
     volumes:
       - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./alertManager/alerts.yaml:/etc/prometheus/alerts.yaml
       - prometheus_data:/prometheus
 
   grafana:
@@ -48,6 +49,17 @@ services:
       - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    networks:
+      - app_network
+    ports:
+    - "9093:9093"
+    volumes:
+    - ./alertManager/alertManager.yaml:/etc/alertmanager/alertmanager.yml
+
 
 networks:
   app_network:
