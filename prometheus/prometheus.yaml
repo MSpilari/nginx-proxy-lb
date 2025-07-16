@@ -12,3 +12,12 @@ scrape_configs:
         labels:
           environment: development
           application: spring-boot
+
+alerting:
+  alertmanagers:
+    - static_configs:
+      - targets:
+          - alertmanager:9093
+
+rule_files:
+  - "alerts.yaml"
