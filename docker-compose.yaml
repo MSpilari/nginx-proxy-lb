@@ -1,5 +1,6 @@
 services:
   spring-server-1:
+    container_name: spring-server-1
     build:
       context: .
     environment:
@@ -10,6 +11,7 @@ services:
       - app_network
 
   spring-server-2:
+    container_name: spring-server-2
     build:
       context: .
     environment:
@@ -20,6 +22,7 @@ services:
       - app_network
 
   nginx:
+    container_name: nginx
     build:
       context: ./nginx
     ports:
@@ -27,10 +30,13 @@ services:
     depends_on:
       - spring-server-1
       - spring-server-2
+    volumes:
+      - ./nginx/logs:/var/log/nginx
     networks:
       - app_network
 
   prometheus:
+    container_name: prometheus
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
@@ -42,6 +48,7 @@ services:
       - prometheus_data:/prometheus
 
   grafana:
+    container_name: grafana
     image: grafana/grafana:latest
     networks:
       - app_network
@@ -60,6 +67,30 @@ services:
     volumes:
     - ./alertManager/alertManager.yaml:/etc/alertmanager/alertmanager.yml
 
+  promtail:
+    container_name: promtail
+    build:
+      context: ./promtail
+    networks:
+      - app_network
+    ports:
+      - "9094:9094"
+    volumes:
+      - ./nginx/logs:/var/log/nginx
+    
+  loki:
+    container_name: loki
+    build:
+      context: ./loki
+    networks:
+      - app_network
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki:/loki
+      - loki_data:/var/loki
+    depends_on:
+      - promtail
 
 networks:
   app_network:
@@ -68,3 +99,4 @@ networks:
 volumes:
   prometheus_data:
   grafana_data:
+  loki_data:
