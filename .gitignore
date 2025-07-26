@@ -37,4 +37,8 @@ build/
 .env*
 !.env.example
 
+### Alert Manager
 /alertManager/alertManager.yaml
+
+### Logs
+*.log
